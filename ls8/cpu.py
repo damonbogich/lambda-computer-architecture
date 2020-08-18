@@ -7,7 +7,15 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        #Add list properties to cpu class to hold 256 bytes of memory 
+        self.ram = [0] * 256
+        #and 8 general purpose registers
+        self.reg = [0] * 8  
+        #add a program counter:
+        self.pc = 0
+
+
+
 
     def load(self):
         """Load a program into memory."""
@@ -59,7 +67,55 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
+    
+    #should accept the address to read and return the value stored there.
+    def ram_read(self, mar):
+        return self.ram[mar]
+
+    # `ram_write()` should accept a value to write, and the address to write it to.
+    def ram_write(self, mar, mdr):
+        self.ram[mar] = mdr
+
 
     def run(self):
         """Run the CPU."""
-        pass
+        #set binary code to variables
+        LDI = 0b10000010
+        PRN = 0b01000111
+        HLT = 0b00000001
+
+        running = True
+
+        while running:
+            #first instruction reads ram at 
+            IR = self.ram_read(self.pc)
+            operand_a = self.ram_read(self.pc + 1)
+            operand_b = self.ram_read(self.pc + 2)
+
+            if IR == HLT:
+                running = False
+                self.pc += 1
+            elif IR == LDI:
+                self.reg[0] = 8
+                self.pc += 3
+            elif IR == PRN:
+                print(self.reg[0])
+
+                self.pc += 2
+
+
+        #reads memory address and stores it in Instruction register
+        
+        #Some instructions requires up to the next two bytes of data _after_ the `PC` in
+        # memory to perform operations on. Sometimes the byte value is a register number,
+        # other times it's a constant value (in the case of `LDI`). Using `ram_read()`,
+        # read the bytes at `PC+1` and `PC+2` from RAM into variables `operand_a` and
+        # `operand_b` in case the instruction needs them.
+        
+#         Then, depending on the value of the opcode, perform the actions needed for the
+        # instruction per the LS-8 spec. Maybe an `if-elif` cascade...? There are other
+        # options, too.
+
+        
+
+       
