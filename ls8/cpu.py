@@ -2,6 +2,12 @@
 
 import sys
 
+
+LDI = 0b10000010
+PRN = 0b01000111
+HLT = 0b00000001
+MUL = 0b10100010
+
 class CPU:
     """Main CPU class."""
 
@@ -13,30 +19,31 @@ class CPU:
         self.reg = [0] * 8  
         #add a program counter:
         self.pc = 0
+        
 
 
 
 
-    def load(self):
+    def load(self, file_name):
         """Load a program into memory."""
 
-        address = 0
-
         # For now, we've just hardcoded a program:
+        # file_name = sys.argv[1]
+        with open(file_name) as f:
+            address = 0
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+            for line in f:
+                line = line.split('#')
+                try:
+                    v = line[0].strip()
+                except ValueError:
+                    continue
+                if len(v) > 0:
+                    self.ram[address] = int(v,2)
+                    address += 1
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+
+            print('memmory', self.ram[:15])
 
 
     def alu(self, op, reg_a, reg_b):
@@ -83,6 +90,7 @@ class CPU:
         LDI = 0b10000010
         PRN = 0b01000111
         HLT = 0b00000001
+        MUL = 0b10100010
 
         running = True
 
@@ -97,11 +105,16 @@ class CPU:
                 self.pc += 1
             elif IR == LDI:
                 self.reg[0] = 8
+                self.reg[1] = 9
                 self.pc += 3
             elif IR == PRN:
                 print(self.reg[0])
-
                 self.pc += 2
+            elif IR == MUL:
+                mult = self.reg[0] * self.reg[1]
+                print(mult)
+                # self.reg[0] = mult  How do i store this value?????
+                self.pc += 3
 
 
         #reads memory address and stores it in Instruction register
