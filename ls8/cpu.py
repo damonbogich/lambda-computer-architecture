@@ -133,33 +133,6 @@ class CPU:
 
 
 
-#set binary code to variables
-        # LDI = 0b10000010
-        # PRN = 0b01000111
-        # HLT = 0b00000001
-        # MUL = 0b10100010
-        # running = True
-
-
-
-            
-            # if IR == HLT:
-            #     running = False
-            #     self.pc += 1
-            # elif IR == LDI:
-            #     self.reg[0] = 8
-            #     self.reg[1] = 9
-            #     self.pc += 3
-            # elif IR == PRN:
-            #     print(self.reg[0])
-            #     self.pc += 2
-            # elif IR == MUL:
-            #     mult = self.reg[0] * self.reg[1]
-            #     print(mult)
-            #     # self.reg[0] = mult  How do i store this value?????
-            #     self.pc += 3
-
-
 
         
 
