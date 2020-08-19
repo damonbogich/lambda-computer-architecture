@@ -116,7 +116,8 @@ class CPU:
 
     def MUL(self, registry_index_1, registry_index_2):
         mult = self.reg[0] * self.reg[1]
-        print(mult)
+        self.reg[0] = mult
+        print('mult', mult)
         # self.reg[0] = mult  How do i store this value?????
         self.pc += 3
     
