@@ -7,6 +7,8 @@ LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
 MUL = 0b10100010
+PUSH = 0b01000101
+POP = 0b01000110
 
 class CPU:
     """Main CPU class."""
@@ -23,14 +25,23 @@ class CPU:
             LDI: self.LDI,
             PRN: self.PRN,
             HLT: self.HLT,
-            MUL: self.MUL
+            MUL: self.MUL,
+            PUSH: self.PUSH,
+            POP: self.POP
+
         }
         # self.branchtable[LDI] = self.LDI
         self.running = True
+        #Stack pointer:
+        #index of register that will point to stack
+        # self.stack_pointer = 7
+        #storing the ram index in the stack pointer
+        # self.reg[7] = self.ram[0xf4]
+        # self.stack_pointer = self.reg[7]
+        # self.stack_pointer_index = 7
+        self.reg[7] = 0xf4
+        self.stack_pointer = self.reg[7]
         
-
-
-
 
     def load(self, file_name):
         """Load a program into memory."""
@@ -96,7 +107,7 @@ class CPU:
         self.pc += 3
 
     def PRN(self, registry_index, param2):
-        print(self.reg[0])
+        print(self.reg[registry_index])
         self.pc += 2
 
     def HLT(self, registry_index, param2):
@@ -108,6 +119,31 @@ class CPU:
         print(mult)
         # self.reg[0] = mult  How do i store this value?????
         self.pc += 3
+    
+    def PUSH(self, register_index, param2):
+        #decrement stack pointer
+        self.stack_pointer -= 1
+        print(self.stack_pointer)
+        #copy value at register_index 
+        value = self.reg[register_index]
+        # and put it in stack
+        self.ram[self.stack_pointer] = value
+
+        self.pc += 2
+
+#possibly something wrong with stack_pointer in init
+
+    def POP(self, register_index, param2):
+        #copy value that stack pointer is pointing to
+        value = self.ram[self.stack_pointer] 
+        #place value at given register index
+        self.reg[register_index] = value 
+        #increment stack pointer
+        self.stack_pointer += 1
+        print(self.stack_pointer)
+        #move program counter
+        self.pc += 2
+
 
 
 
