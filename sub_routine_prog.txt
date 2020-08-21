@@ -1,0 +1,13 @@
+3,  #SAVE_REG R2, (SUBROUTINE ADDED)
+2,   
+6,  #[SUBROUTINE_ADDRESS]
+7,  #CALL R2
+2,
+2  #HALT
+
+
+#SUBROUTINE:
+1  #PRINT_DAMON    <--- address 6 where sub starts
+2  #PRINT_DAMON
+1  #PRINT_DAMON
+8  #RET

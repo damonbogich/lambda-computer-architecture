@@ -9,7 +9,9 @@ HLT = 0b00000001
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
-
+CALL = 0b01010000
+RET = 0b00010001
+ADD = 0b10100000
 class CPU:
     """Main CPU class."""
 
@@ -27,7 +29,11 @@ class CPU:
             HLT: self.HLT,
             MUL: self.MUL,
             PUSH: self.PUSH,
-            POP: self.POP
+            POP: self.POP,
+            CALL: self.CALL,
+            RET: self.RET,
+            # ADD: self.alu
+            ADD: self.ADD
 
         }
         # self.branchtable[LDI] = self.LDI
@@ -70,6 +76,7 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
+            self.pc += 3
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -117,14 +124,17 @@ class CPU:
     def MUL(self, registry_index_1, registry_index_2):
         mult = self.reg[0] * self.reg[1]
         self.reg[0] = mult
-        print('mult', mult)
+        # print('mult', mult)
         # self.reg[0] = mult  How do i store this value?????
         self.pc += 3
+
+    def ADD(self, op, reg_a, reg_b):
+        self.alu(op, reg_a, reg_b)
     
     def PUSH(self, register_index, param2):
         #decrement stack pointer
         self.stack_pointer -= 1
-        print(self.stack_pointer)
+        # print(self.stack_pointer)
         #copy value at register_index 
         value = self.reg[register_index]
         # and put it in stack
@@ -141,9 +151,40 @@ class CPU:
         self.reg[register_index] = value 
         #increment stack pointer
         self.stack_pointer += 1
-        print(self.stack_pointer)
+        # print(self.stack_pointer)
         #move program counter
         self.pc += 2
+
+    def CALL(self, register_index, param2):
+
+        #decrement stackpointer
+        self.stack_pointer -= 1
+         #get address of next instruction
+        address_to_return_to = self.pc + 2
+        #push that address onto stack
+
+        
+        #put address to return to in stack
+        self.ram[self.stack_pointer] = address_to_return_to
+
+        #set program counter to address where subroutine is:
+        register_number = self.ram[self.pc + 1]
+        subroutine_address = self.reg[register_number]
+
+        self.pc = subroutine_address
+
+    def RET(self, param1, param2):
+        #Get return address from the top of the stack 
+        address_to_pop_from = self.ram[self.stack_pointer]  
+        
+        # return_address = self.ram[address_to_pop_from]
+
+        #increment stack pointer
+        self.stack_pointer += 1
+
+        self.pc = address_to_pop_from
+
+        
 
 
 
@@ -157,7 +198,10 @@ class CPU:
             operand_b = self.ram_read(self.pc + 2)
             #first instruction reads ram at 
             IR = self.ram_read(self.pc)
-            self.branchtable[IR](operand_a, operand_b)
+            if IR == 0b10100000:
+                self.branchtable[IR]("ADD", operand_a, operand_b)
+            else:
+                self.branchtable[IR](operand_a, operand_b)
 
 
 

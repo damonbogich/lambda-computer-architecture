@@ -86,6 +86,33 @@ while running:
 
         #incrment stack pointer
         program_counter += 2
+    
+    elif IR == 7: #CALL
+        #get address of next instruction
+        return_address = pc + 2
+        
+        #push that address onto stack
+        register[SP] -= 1
+        address_to_push_to = register[SP]
+        memory[address_to_push_to] = return_address
+        #set the PC to the subroutine address
+        register_number = memory[pc + 1]
+        subroutine_address = register[register_number]
+
+        pc = subroutine_address
+       
+    elif IR == 8: #RETURN
+        #Get return address from the top of the stack 
+        address_to_pop_from = register[SP]
+        return_address = memory[address_to_pop_from]
+        #increment stack pointer
+        register[SP] += 1
+        #set pc to the return address
+        pc = return_address
+
+
+       
+
 
 
 
