@@ -96,8 +96,8 @@ while running:
         address_to_push_to = register[SP]
         memory[address_to_push_to] = return_address
         #set the PC to the subroutine address
-        register_number = memory[pc + 1]
-        subroutine_address = register[register_number]
+        register_number = memory[pc + 1] #register2
+        subroutine_address = register[register_number] #6
 
         pc = subroutine_address
        
